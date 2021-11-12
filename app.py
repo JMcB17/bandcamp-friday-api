@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timedelta
+from typing import Callable
 
 import requests
 from bs4 import BeautifulSoup
@@ -11,7 +12,7 @@ DAY = timedelta(days=1)
 
 
 app = Flask(__name__)
-cache = Cache(app)
+cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache'})
 
 
 class CachedFriday:
@@ -36,7 +37,8 @@ class CachedFriday:
 
         return it_is
 
-    def cache_check(self):
+    # noinspection PyUnusedLocal
+    def cache_check(self, f: Callable):
         if self.next is None:
             return True
 
