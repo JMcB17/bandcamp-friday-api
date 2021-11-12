@@ -8,6 +8,7 @@ flask = "*"
 flask-caching = "*"
 beautifulsoup4 = "*"
 requests = "*"
+gunicorn = "*"
 
 [dev-packages]
 

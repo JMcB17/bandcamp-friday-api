@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2080bc5fcf80d46a5dd066f5fc16d77b0fee49a0b70351cef1fe5fc159e8a363"
+            "sha256": "9ef41b159844cc190936d7c0f33ee31841514fc60c465a9a16725bd66bc01459"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -70,6 +70,14 @@
             ],
             "index": "pypi",
             "version": "==1.10.1"
+        },
+        "gunicorn": {
+            "hashes": [
+                "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e",
+                "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"
+            ],
+            "index": "pypi",
+            "version": "==20.1.0"
         },
         "idna": {
             "hashes": [
@@ -177,6 +185,14 @@
             ],
             "index": "pypi",
             "version": "==2.26.0"
+        },
+        "setuptools": {
+            "hashes": [
+                "sha256:a481fbc56b33f5d8f6b33dce41482e64c68b668be44ff42922903b03872590bf",
+                "sha256:dae6b934a965c8a59d6d230d3867ec408bb95e73bd538ff77e71fedf1eaca729"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==58.5.3"
         },
         "soupsieve": {
             "hashes": [
