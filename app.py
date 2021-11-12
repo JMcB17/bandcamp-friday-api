@@ -18,12 +18,15 @@ cache = Cache(app)
 def is_it_bandcamp_friday():
     response = requests.get('https://isitbandcampfriday.com')
     soup = BeautifulSoup(response.content, 'html.parser')
-    bandcamp_friday_vm = soup.find('div', class_='bandcamp-friday-vm')
-    data_fundraisers = json.loads(bandcamp_friday_vm['data-fundraisers'])
+    bandcamp_friday_vm = soup.find('div', id='bandcamp-friday-vm')
+    data_fundraisers = json.loads(bandcamp_friday_vm['data-fundraisers'])[0]
 
-    next_bandcamp_friday = datetime.strptime(data_fundraisers['data'], '%a, %d %b %Y %H:%M:%S %z')
-
-    is_it = (next_bandcamp_friday < datetime.now() < next_bandcamp_friday + DAY)
+    next_bandcamp_friday = datetime.strptime(data_fundraisers['date'], '%a, %d %b %Y %H:%M:%S %z')
+    now = datetime.now(tz=next_bandcamp_friday.tzinfo)
+    is_it = (next_bandcamp_friday < now < next_bandcamp_friday + DAY)
 
     return jsonify(is_it)
 
+
+if __name__ == "__main__":
+    app.run()
