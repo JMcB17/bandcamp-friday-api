@@ -14,7 +14,6 @@ app = Flask(__name__)
 cache = Cache(app)
 
 
-@app.route('/isitbandcampfriday')
 def is_it_bandcamp_friday():
     response = requests.get('https://isitbandcampfriday.com')
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -23,9 +22,12 @@ def is_it_bandcamp_friday():
 
     next_bandcamp_friday = datetime.strptime(data_fundraisers['date'], '%a, %d %b %Y %H:%M:%S %z')
     now = datetime.now(tz=next_bandcamp_friday.tzinfo)
-    is_it = (next_bandcamp_friday < now < next_bandcamp_friday + DAY)
+    return next_bandcamp_friday < now < next_bandcamp_friday + DAY
 
-    return jsonify(is_it)
+
+@app.route('/isitbandcampfriday')
+def api_view():
+    return jsonify(is_it_bandcamp_friday())
 
 
 if __name__ == "__main__":
