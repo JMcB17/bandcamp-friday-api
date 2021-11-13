@@ -6,15 +6,13 @@ from bs4 import BeautifulSoup
 from flask import Flask, jsonify
 
 
-# add more info as json
-# v1
-
-
 DAY = timedelta(days=1)
+DATETIME_FORMAT = '%a, %d %b %Y %H:%M:%S %z'
+URL = 'https://isitbandcampfriday.com'
 
 
 def get_data_fundraisers() -> dict:
-    response = requests.get('https://isitbandcampfriday.com')
+    response = requests.get(URL)
     soup = BeautifulSoup(response.content, 'html.parser')
     bandcamp_friday_vm = soup.find('div', id='bandcamp-friday-vm')
     data_fundraisers = json.loads(bandcamp_friday_vm['data-fundraisers'])[0]
@@ -23,7 +21,7 @@ def get_data_fundraisers() -> dict:
 
 
 def format_response(data_fundraisers: dict) -> dict:
-    next_bandcamp_friday = datetime.strptime(data_fundraisers['date'], '%a, %d %b %Y %H:%M:%S %z')
+    next_bandcamp_friday = datetime.strptime(data_fundraisers['date'], DATETIME_FORMAT)
     next_end = next_bandcamp_friday + DAY
     now = datetime.now(tz=next_bandcamp_friday.tzinfo)
     it_is = (next_bandcamp_friday < now < next_end)
@@ -32,7 +30,7 @@ def format_response(data_fundraisers: dict) -> dict:
         'it_is': it_is,
         'next_start': next_bandcamp_friday.timestamp(),
         'next_end': next_end.timestamp(),
-        'now': now.timestamp(),
+        'cached_from': int(now.timestamp()),
         'data_fundraisers': data_fundraisers,
     }
     return response
@@ -53,7 +51,10 @@ class CachedFriday:
 
         if now < self.last_response['next_start']:
             pass
-        elif now < self.last_response['next_end'] and self.last_response['next_start'] < self.last_response['now']:
+        elif (
+                now < self.last_response['next_end']
+                and self.last_response['next_start'] < self.last_response['last_cached']
+        ):
             pass
         else:
             self.last_response = format_response(get_data_fundraisers())
@@ -65,9 +66,14 @@ app = Flask(__name__)
 cached_friday = CachedFriday()
 
 
-@app.route('/isitbandcampfriday')
-def api_view():
+@app.route('/isitbandcampfriday/v1')
+def api_view_v1():
     return jsonify(cached_friday.cached_response()['it_is'])
+
+
+@app.route('/isitbandcampfriday/v2')
+def api_view_v2():
+    return jsonify(cached_friday.cached_response())
 
 
 if __name__ == "__main__":
