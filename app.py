@@ -1,24 +1,16 @@
 import json
 from datetime import datetime, timedelta
-from typing import Callable
 
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify
-from flask_caching import Cache
 
 
 # add more info as json
 # v1
-# standalone func
-# remove flask_caching
 
 
 DAY = timedelta(days=1)
-
-
-app = Flask(__name__)
-cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache'})
 
 
 def get_data_fundraisers() -> dict:
@@ -54,42 +46,28 @@ def is_it_bandcamp_friday() -> bool:
 
 class CachedFriday:
     def __init__(self):
-        self.next: datetime = datetime.fromtimestamp(0)
+        self.last_response = format_response(get_data_fundraisers())
 
-    def cached_is_it_bandcamp_friday(self) -> bool:
-        data_fundraisers = get_data_fundraisers()
-        info_dict = format_response(data_fundraisers)
+    def cached_response(self) -> dict:
+        now = datetime.now().timestamp()
 
-        it_is = info_dict['it_is']
-        next_end = info_dict['next_end']
-        next_bandcamp_friday = info_dict['next_start']
-
-        if it_is:
-            self.next = next_end
+        if now < self.last_response['next_start']:
+            pass
+        elif now < self.last_response['next_end'] and self.last_response['next_start'] < self.last_response['now']:
+            pass
         else:
-            self.next = next_bandcamp_friday
+            self.last_response = format_response(get_data_fundraisers())
 
-        return it_is
-
-    # noinspection PyUnusedLocal
-    def cache_check(self, f: Callable):
-        if self.next is None:
-            return True
-
-        now = datetime.now(tz=self.next.tzinfo)
-        if self.next < now:
-            return True
-
-        return False
+        return self.last_response
 
 
+app = Flask(__name__)
 cached_friday = CachedFriday()
 
 
 @app.route('/isitbandcampfriday')
-@cache.cached(unless=cached_friday.cache_check)
 def api_view():
-    return jsonify(cached_friday.cached_is_it_bandcamp_friday())
+    return jsonify(cached_friday.cached_response()['it_is'])
 
 
 if __name__ == "__main__":
