@@ -69,12 +69,12 @@ app = Flask(__name__)
 cached_friday = CachedFriday()
 
 
-@app.route('/isitbandcampfriday/v1')
+@app.route('/v1')
 def api_view_v1():
     return jsonify(cached_friday.cached_response()['it_is'])
 
 
-@app.route('/isitbandcampfriday/v2')
+@app.route('/v2')
 def api_view_v2():
     return jsonify(cached_friday.cached_response())
 
