@@ -6,6 +6,9 @@ from bs4 import BeautifulSoup
 from flask import Flask, jsonify
 
 
+__version__ = '1.0.0'
+
+
 DAY = timedelta(days=1)
 DATETIME_FORMAT = '%a, %d %b %Y %H:%M:%S %z'
 URL = 'https://isitbandcampfriday.com'
