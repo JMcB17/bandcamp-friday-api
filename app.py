@@ -69,6 +69,12 @@ app = Flask(__name__)
 cached_friday = CachedFriday()
 
 
+@app.route('/')
+def index():
+    return """https://bandcamp-friday-api.herokuapp.com/v1 
+https://bandcamp-friday-api.herokuapp.com/v2"""
+
+
 @app.route('/v1')
 def api_view_v1():
     return jsonify(cached_friday.cached_response()['it_is'])
