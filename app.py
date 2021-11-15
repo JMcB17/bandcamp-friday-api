@@ -71,8 +71,9 @@ cached_friday = CachedFriday()
 
 @app.route('/')
 def index():
-    return """https://bandcamp-friday-api.herokuapp.com/v1 
-https://bandcamp-friday-api.herokuapp.com/v2"""
+    return """<a href="https://bandcamp-friday-api.herokuapp.com/v1">https://bandcamp-friday-api.herokuapp.com/v1</a>
+<br>
+<a href="https://bandcamp-friday-api.herokuapp.com/v2">https://bandcamp-friday-api.herokuapp.com/v2</a>"""
 
 
 @app.route('/v1')
